@@ -13,6 +13,3 @@
 
 # vim
 *.swp
-
-# linting
-.eslintrc.json
