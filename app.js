@@ -1,12 +1,8 @@
-const express = require("express");
-const app = express();
-
 const hostname = "127.0.0.1";
 const port = 6969;
 
 let admin = require("firebase-admin");
 let serviceAccount = require("./grummy-4db97-firebase-adminsdk-pfho9-60fcb53f5e.json");
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://grummy-4db97.firebaseio.com"
@@ -14,8 +10,11 @@ admin.initializeApp({
 
 const deckMod = require("./cards");
 
+const express = require("express");
+const cors = require("cors")
+const app = express();
+app.use(cors());
 app.get("/", (req, res) => {
-  // Get a database reference to our posts
   let db = admin.database();
   let ref = db.ref("games/");
 
@@ -35,18 +34,21 @@ app.get("/", (req, res) => {
 });
 
 app.get("/new", (req, res) => {
-  console.log("new game");
   const deck = new deckMod.Deck();
   deck.shuffle();
-  const c = deck.draw();
-  console.log(c.toString());
-  res.send(c.toString());
-});
 
-app.get("/deploy", (req, res) => {
-  console.log("deploy");
-  const g = spawn("git", ["status"]);
-  res.send(200);
+  let db = admin.database();
+  db.collection("games/")
+    .doc(Date.now().toString())
+    .set({deck: deck})
+    .then(res => {
+      console.log("new game", res);
+    });
+
+  // const c = deck.draw();
+  // console.log(c.toString());
+  res.send('ok');
+
 });
 
 // app.get("/draw", (req, res) =>
