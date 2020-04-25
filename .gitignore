@@ -13,3 +13,6 @@
 
 # vim
 *.swp
+
+# lock files because some weiros use npm, not yarn
+yarn.lock
