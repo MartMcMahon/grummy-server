@@ -52,5 +52,6 @@ app.get("/new", (req, res) => {
 });
 
 // app.get("/draw", (req, res) =>
+// cool. cool. cool.
 
 app.listen(port);
