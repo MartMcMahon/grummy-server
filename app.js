@@ -37,7 +37,7 @@ app.get("/new", (req, res) => {
   const deck = new deckMod.Deck();
   deck.shuffle();
 
-  let db = admin.database();
+  let db = admin.firestore();
   db.collection("games/")
     .doc(Date.now().toString())
     .set({deck: deck})
