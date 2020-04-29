@@ -58,4 +58,7 @@ exports.Deck = class Deck extends Array {
       }
     };
   }
+
+  toJson() {
+  }
 };

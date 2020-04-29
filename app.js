@@ -13,6 +13,9 @@ const deckMod = require("./cards");
 const express = require("express");
 const cors = require("cors")
 const app = express();
+
+const session = {};
+
 app.use(cors());
 app.get("/", (req, res) => {
   let db = admin.database();
@@ -34,22 +37,26 @@ app.get("/", (req, res) => {
 });
 
 app.get("/new", (req, res) => {
-  const deck = new deckMod.Deck();
+  session.deck = new deckMod.Deck();
   deck.shuffle();
+
+  const game_id = Date.now().toString();
 
   let db = admin.firestore();
   db.collection("games/")
-    .doc(Date.now().toString())
-    .set({deck: deck})
+    .doc(game_id)
+    .set({deck: JSON.stringify(deck)})
     .then(res => {
       console.log("new game", res);
     });
 
   // const c = deck.draw();
   // console.log(c.toString());
-  res.send('ok');
+  res.send({game_id});
 
 });
+
+// app.get("/draw", (req,res) => {
 
 // app.get("/draw", (req, res) =>
 // cool. cool. cool.
