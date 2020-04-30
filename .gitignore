@@ -1,6 +1,5 @@
 # dependencies
 /node_modules
-package-lock.json
 
 # misc
 .DS_Store
@@ -16,5 +15,6 @@ grummy-*-firebase-adminsdk-*.json
 # vim
 *.swp
 
-# lock files because some weiros use npm, not yarn
+# lock files
+package-lock.json
 yarn.lock
