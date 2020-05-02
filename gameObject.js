@@ -13,9 +13,9 @@ class GameObject {
   }
 
   startRound() {
-    rounds += 1;
+    this.rounds += 1;
     this.deck = new deckMod.Deck();
-    deck.shuffle();
+    this.deck.shuffle();
     this.table = [[], [], [], []];
     this.players.forEach((id, i) => {
       this.hands[id] = [];

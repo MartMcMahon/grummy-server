@@ -12,11 +12,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const deckMod = require("./cards");
 const GameObject = require("./gameObject");
 let gameObject = null;
-
-let deck;
 
 app.use(cors());
 app.get("/", (req, res) => {
@@ -50,6 +47,7 @@ app.get("/game_status", (req, res) => {
     return gameObject.id;
   } else {
     gameObject = new GameObject.GameObject();
+    gameObject.startRound();
     res.send({ id: 69 });
     return 69;
   }
