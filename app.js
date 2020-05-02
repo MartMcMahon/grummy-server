@@ -46,12 +46,13 @@ app.get("/draw", (req, res) => {
 
 app.get("/game_status", (req, res) => {
   if (gameObject) {
+    res.send({ id: gameObject.id });
     return gameObject.id;
   } else {
     gameObject = new GameObject.GameObject();
+    res.send({ id: 69 });
     return 69;
   }
-  res.send({ id });
 });
 
 app.get("/play_card", (req, res) => {

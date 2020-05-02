@@ -8,20 +8,19 @@ class GameObject {
     this.hands = {};
     this.players = ["", "", "", ""];
     this.rounds = 0;
-    this.score = [0,0,0,0];
+    this.score = [0, 0, 0, 0];
     this.table = [[], [], [], []];
   }
 
   startRound() {
-    rounds += 1
+    rounds += 1;
     this.deck = new deckMod.Deck();
     deck.shuffle();
     this.table = [[], [], [], []];
     this.players.forEach((id, i) => {
       this.hands[id] = [];
     });
-}
-
+  }
 
   // returns the index when a seat is found
   // returns the string "full" if the table is full
@@ -37,8 +36,8 @@ class GameObject {
     return "full";
   }
 
-  deal(userId, n=1) {
-    for (let i=n;i--;) {
+  deal(userId, n = 1) {
+    for (let i = n; i--; ) {
       const card = this.deck.draw();
       this.hands[userId].push(card);
     }
@@ -54,7 +53,5 @@ class GameObject {
     table[chair].push(card);
     return this.table;
   }
-
-
 }
 exports.GameObject = GameObject;
