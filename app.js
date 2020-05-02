@@ -14,6 +14,9 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+const GameObject = require("./gameObject");
+let gameObject = null;
+
 let deck;
 
 app.use(cors());
@@ -37,6 +40,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/new", (req, res) => {
+
   deck = new deckMod.Deck();
   deck.shuffle();
 
@@ -58,36 +62,28 @@ app.get("/draw", (req, res) => {
   const card = deck.draw();
   console.log("user " + userId + " drew " + card.toString());
 
-  let db = admin.firestore();
-  db.collection("games/")
-    .doc(game_id)
-    .update({ deck: JSON.stringify(deck) })
-    .then(res => {
-      console.log("updated the deck");
-    });
-
+  gameObject.hands[userId].push(card);
   res.send({ card });
 });
 
 const game_status = () => {
-  return admin
-    .firestore()
-    .collection("games")
-    .get()
-    .then(snapshot => {
-      let docs = snapshot.docs;
-      let id = docs[docs.length - 1].id;
-      console.log(id);
-      return id;
-    });
+  console.log('running game_status');
+  if (gameObject) {
+    return gameObject.id;
+  } else {
+    gameObject = new GameObject.GameObject();
+    return 69;
+  }
 };
 
-
-app.get("/game_status", async (req, res) => {
-  const id = await game_status();
+app.get("/game_status", (req, res) => {
+  const id = game_status();
   console.log(id);
   res.send({id});
 });
+
+// app.get("/get_hand", (req, res) => {
+
 
 
 app.get("/play_card", (req, res) => {
@@ -97,5 +93,16 @@ app.get("/play_card", (req, res) => {
   //   .doc(game_id)
   // .set({
 });
+
+app.get("/get_hand", (req, res) => {
+  res.send(gameObject.hands[req.query.userId]);
+});
+
+app.get("/register_player", (req, res) => {
+  let userId = req.query.userId;
+  gameObject.registerPlayer(userId);
+  res.send({statusCode: 200});
+});
+
 
 app.listen(port);
