@@ -14,6 +14,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+let deck;
+
 app.use(cors());
 app.get("/", (req, res) => {
   let db = admin.database();
@@ -33,8 +35,6 @@ app.get("/", (req, res) => {
   );
   res.send(val);
 });
-
-let deck;
 
 app.get("/new", (req, res) => {
   deck = new deckMod.Deck();
@@ -58,7 +58,44 @@ app.get("/draw", (req, res) => {
   const card = deck.draw();
   console.log("user " + userId + " drew " + card.toString());
 
+  let db = admin.firestore();
+  db.collection("games/")
+    .doc(game_id)
+    .update({ deck: JSON.stringify(deck) })
+    .then(res => {
+      console.log("updated the deck");
+    });
+
   res.send({ card });
+});
+
+const game_status = () => {
+  return admin
+    .firestore()
+    .collection("games")
+    .get()
+    .then(snapshot => {
+      let docs = snapshot.docs;
+      let id = docs[docs.length - 1].id;
+      console.log(id);
+      return id;
+    });
+};
+
+
+app.get("/game_status", async (req, res) => {
+  const id = await game_status();
+  console.log(id);
+  res.send({id});
+});
+
+
+app.get("/play_card", (req, res) => {
+  const card = new Card(res.query.s, res.query.v);
+  let db = admin.firestore();
+  // db.collection("games/")
+  //   .doc(game_id)
+  // .set({
 });
 
 app.listen(port);
