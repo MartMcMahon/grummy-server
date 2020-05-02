@@ -58,8 +58,6 @@ app.get("/draw", (req, res) => {
   const card = deck.draw();
   console.log("user " + userId + " drew " + card.toString());
 
-  console.log(status);
-
   let db = admin.firestore();
   db.collection("games/")
     .doc(game_id)
@@ -71,8 +69,8 @@ app.get("/draw", (req, res) => {
   res.send({ card });
 });
 
-app.get("/game_status", async (req, res) => {
-  const id = await admin
+const game_status = () => {
+  return admin
     .firestore()
     .collection("games")
     .get()
@@ -82,9 +80,15 @@ app.get("/game_status", async (req, res) => {
       console.log(id);
       return id;
     });
+};
+
+
+app.get("/game_status", async (req, res) => {
+  const id = await game_status();
   console.log(id);
   res.send({id});
 });
+
 
 app.get("/play_card", (req, res) => {
   const card = new Card(res.query.s, res.query.v);
