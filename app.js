@@ -56,9 +56,11 @@ app.get("/new", (req, res) => {
 
 });
 
-// app.get("/draw", (req,res) => {
-
-// app.get("/draw", (req, res) =>
-// cool. cool. cool.
+app.get("/draw", (req, res) => {
+  userId = req.query.UUID;
+  console.log(req.query.UUID);
+  // todo: needs the `new` endpoint to be hit first`
+  // card = session.deck.draw();
+});
 
 app.listen(port);
