@@ -11,10 +11,8 @@ admin.initializeApp({
 const deckMod = require("./cards");
 
 const express = require("express");
-const cors = require("cors")
+const cors = require("cors");
 const app = express();
-
-const session = {};
 
 app.use(cors());
 app.get("/", (req, res) => {
@@ -36,8 +34,10 @@ app.get("/", (req, res) => {
   res.send(val);
 });
 
+let deck;
+
 app.get("/new", (req, res) => {
-  session.deck = new deckMod.Deck();
+  deck = new deckMod.Deck();
   deck.shuffle();
 
   const game_id = Date.now().toString();
@@ -45,20 +45,22 @@ app.get("/new", (req, res) => {
   let db = admin.firestore();
   db.collection("games/")
     .doc(game_id)
-    .set({deck: JSON.stringify(deck)})
+    .set({ deck: JSON.stringify(deck) })
     .then(res => {
       console.log("new game", res);
     });
 
   // const c = deck.draw();
   // console.log(c.toString());
-  res.send({game_id});
-
+  res.send({ game_id, deck });
 });
 
-// app.get("/draw", (req,res) => {
+app.get("/draw", (req, res) => {
+  const userId = req.query.userId;
+  const card = deck.draw();
+  console.log("user " + userId + " drew " + card.toString());
 
-// app.get("/draw", (req, res) =>
-// cool. cool. cool.
+  res.send({ card });
+});
 
 app.listen(port);
