@@ -50,8 +50,6 @@ app.get("/new", (req, res) => {
       console.log("new game", res);
     });
 
-  // const c = deck.draw();
-  // console.log(c.toString());
   res.send({ game_id, deck });
 });
 
