@@ -8,11 +8,13 @@ admin.initializeApp({
   databaseURL: "https://grummy-4db97.firebaseio.com"
 });
 
-const deckMod = require("./cards");
-
 const express = require("express");
 const cors = require("cors");
 const app = express();
+
+const deckMod = require("./cards");
+const GameObject = require("./gameObject");
+let gameObject = null;
 
 let deck;
 
@@ -36,66 +38,36 @@ app.get("/", (req, res) => {
   res.send(val);
 });
 
-app.get("/new", (req, res) => {
-  deck = new deckMod.Deck();
-  deck.shuffle();
-
-  const game_id = Date.now().toString();
-
-  let db = admin.firestore();
-  db.collection("games/")
-    .doc(game_id)
-    .set({ deck: JSON.stringify(deck) })
-    .then(res => {
-      console.log("new game", res);
-    });
-
-  res.send({ game_id, deck });
-});
-
 app.get("/draw", (req, res) => {
   const userId = req.query.userId;
-  const card = deck.draw();
-  console.log("user " + userId + " drew " + card.toString());
-
-  let db = admin.firestore();
-  db.collection("games/")
-    .doc(game_id)
-    .update({ deck: JSON.stringify(deck) })
-    .then(res => {
-      console.log("updated the deck");
-    });
-
-  res.send({ card });
+  const hand = gameObject.deal(userId);
+  res.send({ hand });
 });
 
-const game_status = () => {
-  return admin
-    .firestore()
-    .collection("games")
-    .get()
-    .then(snapshot => {
-      let docs = snapshot.docs;
-      let id = docs[docs.length - 1].id;
-      console.log(id);
-      return id;
-    });
-};
-
-
-app.get("/game_status", async (req, res) => {
-  const id = await game_status();
-  console.log(id);
-  res.send({id});
+app.get("/game_status", (req, res) => {
+  if (gameObject) {
+    return gameObject.id;
+  } else {
+    gameObject = new GameObject.GameObject();
+    return 69;
+  }
+  res.send({ id });
 });
-
 
 app.get("/play_card", (req, res) => {
-  const card = new Card(res.query.s, res.query.v);
-  let db = admin.firestore();
-  // db.collection("games/")
-  //   .doc(game_id)
-  // .set({
+  const card = { suit: req.query.s, value: req.query.v };
+  const table = gameObject.playCard(req.query.userId, card);
+  res.send({ table });
+});
+
+app.get("/get_hand", (req, res) => {
+  res.send(gameObject.hands[req.query.userId]);
+});
+
+app.get("/register_player", (req, res) => {
+  let userId = req.query.userId;
+  gameObject.registerPlayer(userId);
+  res.send({ statusCode: 200 });
 });
 
 app.listen(port);
