@@ -1,9 +1,9 @@
 const deckMod = require("./cards");
 
+
 class GameObject {
   constructor() {
-    this.id = 10;
-    // this.id = Date.now().toString();
+    this.id = Date.now().toString();
     this.deck = [];
     this.hands = {};
     this.players = ["", "", "", ""];
@@ -22,18 +22,25 @@ class GameObject {
     });
   }
 
+  // checks for presence of username in the game
   // returns the index when a seat is found
-  // returns the string "full" if the table is full
+  // returns the string "full" if the table is
   registerPlayer(userId) {
-    for (let i; i < 4; i++) {
-      if (!this.players[i]) {
-        this.players[i] = userId;
-        return i;
-      }
+    console.log(this.players);
+    if (this.players.indexOf(userId) > -1) {
+      return "taken";
+    } else if (this.players.indexOf('') == -1) {
+      return "full";
+    } else {
+      let userSet;
+      this.players.forEach((player, i) => {
+        if (!this.players[i] && !userSet) {
+          this.players[i] = userId;
+          userSet = true;
+          return i;
+        }
+      });
     }
-
-    this.hands[userId] = [];
-    return "full";
   }
 
   deal(userId, n = 1) {

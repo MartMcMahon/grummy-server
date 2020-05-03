@@ -42,15 +42,15 @@ app.get("/draw", (req, res) => {
 });
 
 app.get("/game_status", (req, res) => {
+  let gameId;
   if (gameObject) {
-    res.send({ id: gameObject.id });
-    return gameObject.id;
+    gameId = gameObject.id;
   } else {
     gameObject = new GameObject.GameObject();
-    gameObject.startRound();
-    res.send({ id: 69 });
-    return 69;
+    gameId = gameObject.id;
   }
+  res.send({ id: gameId });
+  return gameId;
 });
 
 app.get("/play_card", (req, res) => {
@@ -63,10 +63,20 @@ app.get("/get_hand", (req, res) => {
   res.send(gameObject.hands[req.query.userId]);
 });
 
-app.get("/register_player", (req, res) => {
+app.put("/register_player", (req, res) => {
   let userId = req.query.userId;
-  gameObject.registerPlayer(userId);
-  res.send({ statusCode: 200 });
+  let response;
+  switch (gameObject.registerPlayer(userId)) {
+    case "taken":
+      response ={ statusCode: 409, reason: "username taken" };
+      break;
+    case "full":
+      response ={ statusCode: 409, reason: "game is full" };
+      break;
+    default:
+      response ={ statusCode: 200 };
+  }
+  res.send(response);
 });
 
 app.listen(port);
