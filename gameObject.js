@@ -25,9 +25,7 @@ class GameObject {
     this.deck = new deckMod.Deck();
     this.deck.shuffle();
     this.table = [[], [], [], []];
-    this.players.forEach((id, i) => {
-      this.hands[id] = [];
-    });
+    this.hands = {};
   }
 
   // checks for presence of username in the game
