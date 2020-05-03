@@ -9,6 +9,15 @@ class GameObject {
     this.rounds = 0;
     this.score = [0, 0, 0, 0];
     this.table = [[], [], [], []];
+
+    this.clock = setInterval(() => {
+      console.log({
+        deck: this.deck,
+        players: this.players,
+        table: this.table,
+        hands: this.hands
+      });
+    }, 1000);
   }
 
   startRound() {
@@ -23,23 +32,21 @@ class GameObject {
 
   // checks for presence of username in the game
   // returns the index when a seat is found
-  // returns the string "full" if the table is full
+  // returns the -1 if the table is full
   registerPlayer(userId) {
-    if (this.players.indexOf(userId) > -1) {
-      return "taken";
-    } else if (this.players.indexOf('') == -1) {
-      return "full";
-    } else {
-      let userSet;
-      this.players.forEach((player, i) => {
-        if (!this.players[i] && !userSet) {
-          this.players[i] = userId;
-          this.hands[userId] = [];
-          userSet = true;
-          return i;
-        }
-      });
+    let chair = this.players.indexOf(userId);
+    if (chair + 1) {
+      return chair;
     }
+    for (let i = 0; i < 4; i++) {
+      if (!this.players[i]) {
+        this.players[i] = userId;
+        this.hands[userId] = [];
+        chair = i;
+        break;
+      }
+    }
+    return chair;
   }
 
   deal(userId, n = 1) {
@@ -55,9 +62,10 @@ class GameObject {
   }
 
   playCard(userId, card) {
-    const chair = getChair(userId);
-    table[chair].push(card);
+    const chair = this.getChair(userId);
+    this.table[chair].push(card);
     return this.table;
   }
+
 }
 exports.GameObject = GameObject;
