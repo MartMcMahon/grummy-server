@@ -56,14 +56,12 @@ app.get("/game_status", (req, res) => {
 });
 
 app.put("/play_cards", (req, res) => {
-  console.log(req.query);
-  console.log(req.query.cards);
-  console.log(JSON.parse(req.query.cards));
   const userId = req.query.userId;
   const cards = JSON.parse(req.query.cards).map(
     base_card => new Card(base_card)
   );
   const new_state = gameObject.playCards(userId, cards);
+  console.log(new_state);
   res.send(new_state);
 });
 
@@ -73,19 +71,19 @@ app.get("/get_hand", (req, res) => {
 
 app.put("/register_player", (req, res) => {
   let userId = req.query.userId;
-  let response;
+  let response = {};
   switch (gameObject.registerPlayer(userId)) {
     case "taken":
-      res.statusCode = 409;
-      response = "username taken";
+      ressponse.statusCode = 409;
+      response.statusText = "username taken";
       break;
-    case "full":
-      res.statusCode = 409;
-      response = "game is full";
+    case -1:
+      ressponse.statusCode = 409;
+      response.statusText = "game is full";
       break;
     default:
-      res.statusCode = 200;
-      response = "registered";
+      response.statusCode = 200;
+      response.statusText = "registered";
   }
   res.send(response);
 });
