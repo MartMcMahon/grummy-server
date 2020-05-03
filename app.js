@@ -83,4 +83,8 @@ app.put("/register_player", (req, res) => {
   res.send(response);
 });
 
+app.get("/table", (req, res) => {
+  res.send(this.table);
+});
+
 app.listen(port);
