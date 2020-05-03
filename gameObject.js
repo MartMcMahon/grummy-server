@@ -34,6 +34,7 @@ class GameObject {
       this.players.forEach((player, i) => {
         if (!this.players[i] && !userSet) {
           this.players[i] = userId;
+          this.hands[userId] = [];
           userSet = true;
           return i;
         }
