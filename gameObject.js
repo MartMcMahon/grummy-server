@@ -10,14 +10,15 @@ class GameObject {
     this.score = [0, 0, 0, 0];
     this.table = [[], [], [], []];
 
-    this.clock = setInterval(() => {
-      console.log({
-        deck: this.deck,
-        players: this.players,
-        table: this.table,
-        hands: this.hands
-      });
-    }, 1000);
+    // this.clock = setInterval(() => {
+    //   console.log({
+    //     deck: this.deck,
+    //     players: this.players,
+    //     table: this.table,
+    //     hands: this.hands
+    //   });
+    // }, 1000);
+
   }
 
   startRound() {
@@ -59,11 +60,16 @@ class GameObject {
     return this.players.indexOf(userId);
   }
 
-  playCard(userId, card) {
-    const chair = this.getChair(userId);
-    this.table[chair].push(card);
-    return this.table;
-  }
+  playCards(userId, cards) {
+    const valid_cards = cards.filter(card => this.hands[userId].includes(card));
+    console.log('valid_cards', valid_cards);
+    const new_hand = this.hands[userId].filter(
+      card => !valid_cards.includes(card)
+    );
 
+    this.hands[userId] = new_hand;
+    this.table[this.getChair(userId)].push(...valid_cards);
+    return { table: this.table, hand: this.hands[userId] };
+  }
 }
 exports.GameObject = GameObject;

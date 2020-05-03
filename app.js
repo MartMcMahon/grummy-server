@@ -12,6 +12,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+const { Card } = require("./cards");
 const GameObject = require("./gameObject");
 let gameObject = null;
 
@@ -54,10 +55,16 @@ app.get("/game_status", (req, res) => {
   return gameId;
 });
 
-app.get("/play_card", (req, res) => {
-  const card = { suit: req.query.s, value: req.query.v };
-  const table = gameObject.playCard(req.query.userId, card);
-  res.send({ table });
+app.put("/play_cards", (req, res) => {
+  console.log(req.query);
+  console.log(req.query.cards);
+  console.log(JSON.parse(req.query.cards));
+  const userId = req.query.userId;
+  const cards = JSON.parse(req.query.cards).map(
+    base_card => new Card(base_card)
+  );
+  const new_state = gameObject.playCards(userId, cards);
+  res.send(new_state);
 });
 
 app.get("/get_hand", (req, res) => {
