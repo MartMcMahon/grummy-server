@@ -47,6 +47,7 @@ app.get("/game_status", (req, res) => {
     gameId = gameObject.id;
   } else {
     gameObject = new GameObject.GameObject();
+    gameObject.startRound();
     gameId = gameObject.id;
   }
   res.send({ id: gameId });
