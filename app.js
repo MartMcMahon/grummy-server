@@ -68,13 +68,16 @@ app.put("/register_player", (req, res) => {
   let response;
   switch (gameObject.registerPlayer(userId)) {
     case "taken":
-      response ={ statusCode: 409, reason: "username taken" };
+      res.statusCode = 409;
+      response = "username taken";
       break;
     case "full":
-      response ={ statusCode: 409, reason: "game is full" };
+      res.statusCode = 409;
+      response = "game is full";
       break;
     default:
-      response ={ statusCode: 200 };
+      res.statusCode = 200;
+      response = "registered";
   }
   res.send(response);
 });

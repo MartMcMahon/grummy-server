@@ -1,6 +1,5 @@
 const deckMod = require("./cards");
 
-
 class GameObject {
   constructor() {
     this.id = Date.now().toString();
@@ -24,9 +23,8 @@ class GameObject {
 
   // checks for presence of username in the game
   // returns the index when a seat is found
-  // returns the string "full" if the table is
+  // returns the string "full" if the table is full
   registerPlayer(userId) {
-    console.log(this.players);
     if (this.players.indexOf(userId) > -1) {
       return "taken";
     } else if (this.players.indexOf('') == -1) {
