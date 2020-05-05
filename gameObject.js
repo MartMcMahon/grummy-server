@@ -61,7 +61,10 @@ class GameObject {
   }
 
   playCards(userId, cards) {
-    const valid_cards = cards.filter(card => this.hands[userId].includes(card));
+    console.log(cards);
+    // const valid_cards = cards.filter(card => this.hands[userId].includes(card));
+    // TODO: revert back to this filter after implementing a way to compare card objects to properly filter
+    const valid_cards = cards;
     console.log('valid_cards', valid_cards);
     const new_hand = this.hands[userId].filter(
       card => !valid_cards.includes(card)
@@ -69,7 +72,7 @@ class GameObject {
 
     this.hands[userId] = new_hand;
     this.table[this.getChair(userId)].push(...valid_cards);
-    return { table: this.table, hand: this.hands[userId] };
+    return { table: this.table, hand: this.hands[userId], new_hand: new_hand };
   }
 }
 exports.GameObject = GameObject;
