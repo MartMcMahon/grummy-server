@@ -12,6 +12,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+const { Card } = require("./cards");
 const GameObject = require("./gameObject");
 let gameObject = null;
 
@@ -47,16 +48,21 @@ app.get("/game_status", (req, res) => {
     gameId = gameObject.id;
   } else {
     gameObject = new GameObject.GameObject();
+    gameObject.startRound();
     gameId = gameObject.id;
   }
   res.send({ id: gameId });
   return gameId;
 });
 
-app.get("/play_card", (req, res) => {
-  const card = { suit: req.query.s, value: req.query.v };
-  const table = gameObject.playCard(req.query.userId, card);
-  res.send({ table });
+app.put("/play_cards", (req, res) => {
+  const userId = req.query.userId;
+  const cards = JSON.parse(req.query.cards).map(
+    base_card => new Card(base_card)
+  );
+  const new_state = gameObject.playCards(userId, cards);
+  console.log(new_state);
+  res.send(new_state);
 });
 
 app.get("/get_hand", (req, res) => {
@@ -65,21 +71,33 @@ app.get("/get_hand", (req, res) => {
 
 app.put("/register_player", (req, res) => {
   let userId = req.query.userId;
-  let response;
-  switch (gameObject.registerPlayer(userId)) {
+  let response = {};
+  const chair = gameObject.registerPlayer(userId);
+  response.chair = chair;
+  switch (chair) {
     case "taken":
-      res.statusCode = 409;
-      response = "username taken";
+      ressponse.statusCode = 409;
+      response.statusText = "username taken";
       break;
-    case "full":
-      res.statusCode = 409;
-      response = "game is full";
+    case -1:
+      ressponse.statusCode = 409;
+      response.statusText = "game is full";
       break;
     default:
-      res.statusCode = 200;
-      response = "registered";
+      response.statusCode = 200;
+      response.statusText = "registered";
   }
   res.send(response);
+});
+
+app.get("/table", (req, res) => {
+  res.send(this.table);
+});
+
+app.get("/state", (req, res) => {
+  res.send({
+    table: this.table
+  });
 });
 
 app.listen(port);

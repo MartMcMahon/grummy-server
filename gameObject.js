@@ -9,6 +9,16 @@ class GameObject {
     this.rounds = 0;
     this.score = [0, 0, 0, 0];
     this.table = [[], [], [], []];
+
+    // this.clock = setInterval(() => {
+    //   console.log({
+    //     deck: this.deck,
+    //     players: this.players,
+    //     table: this.table,
+    //     hands: this.hands
+    //   });
+    // }, 1000);
+
   }
 
   startRound() {
@@ -16,29 +26,26 @@ class GameObject {
     this.deck = new deckMod.Deck();
     this.deck.shuffle();
     this.table = [[], [], [], []];
-    this.players.forEach((id, i) => {
-      this.hands[id] = [];
-    });
+    this.hands = {};
   }
 
   // checks for presence of username in the game
   // returns the index when a seat is found
-  // returns the string "full" if the table is full
+  // returns the -1 if the table is full
   registerPlayer(userId) {
-    if (this.players.indexOf(userId) > -1) {
-      return "taken";
-    } else if (this.players.indexOf('') == -1) {
-      return "full";
-    } else {
-      let userSet;
-      this.players.forEach((player, i) => {
-        if (!this.players[i] && !userSet) {
-          this.players[i] = userId;
-          userSet = true;
-          return i;
-        }
-      });
+    let chair = this.players.indexOf(userId);
+    if (chair + 1) {
+      return chair;
     }
+    for (let i = 0; i < 4; i++) {
+      if (!this.players[i]) {
+        this.players[i] = userId;
+        this.hands[userId] = [];
+        chair = i;
+        break;
+      }
+    }
+    return chair;
   }
 
   deal(userId, n = 1) {
@@ -53,10 +60,19 @@ class GameObject {
     return this.players.indexOf(userId);
   }
 
-  playCard(userId, card) {
-    const chair = getChair(userId);
-    table[chair].push(card);
-    return this.table;
+  playCards(userId, cards) {
+    console.log(cards);
+    // const valid_cards = cards.filter(card => this.hands[userId].includes(card));
+    // TODO: revert back to this filter after implementing a way to compare card objects to properly filter
+    const valid_cards = cards;
+    console.log('valid_cards', valid_cards);
+    const new_hand = this.hands[userId].filter(
+      card => !valid_cards.includes(card)
+    );
+
+    this.hands[userId] = new_hand;
+    this.table[this.getChair(userId)].push(...valid_cards);
+    return { table: this.table, hands: this.hands[userId], new_hand: new_hand };
   }
 }
 exports.GameObject = GameObject;

@@ -1,7 +1,28 @@
 class Card {
+
   constructor(suit, value) {
-    this.suit = suit;
-    this.value = value + 1;
+    if (value===undefined) {
+      if (Array.isArray(suit)) {
+        this.suit = suit[0];
+        this.value = suit[1];
+      } else if (!Number.isInteger(suit)) {
+        this.suit = suit.suit;
+        this.value = suit.value;
+      } else {
+        throw TypeError("invalid card");
+      }
+    } else {
+      this.suit = suit;
+      this.value = value + 1;
+    }
+  }
+
+  toString() {
+    let val = this.value;
+    if (this.value > 10 || this.value === 1) {
+      val = highvals[this.value];
+    }
+    return `the ${val} of ${SUITS[this.suit]}`;
   }
 }
 exports.Card = Card;
@@ -34,15 +55,10 @@ exports.Deck = class Deck extends Array {
     if (this.length > 0) {
       return this.shift();
     }
-    // TODO: this return needs to be changed
-    // once the logic for the server is in place
     return {
       toString: () => {
         console.log("the deck is empty");
       }
     };
   }
-
-  toJson() {
-  }
-};
+}
