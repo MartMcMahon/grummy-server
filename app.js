@@ -72,7 +72,9 @@ app.get("/get_hand", (req, res) => {
 app.put("/register_player", (req, res) => {
   let userId = req.query.userId;
   let response = {};
-  switch (gameObject.registerPlayer(userId)) {
+  const chair = gameObject.registerPlayer(userId);
+  response.chair = chair;
+  switch (chair) {
     case "taken":
       ressponse.statusCode = 409;
       response.statusText = "username taken";
@@ -90,6 +92,12 @@ app.put("/register_player", (req, res) => {
 
 app.get("/table", (req, res) => {
   res.send(this.table);
+});
+
+app.get("/state", (req, res) => {
+  res.send({
+    table: this.table
+  });
 });
 
 app.listen(port);

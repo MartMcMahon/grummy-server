@@ -72,7 +72,7 @@ class GameObject {
 
     this.hands[userId] = new_hand;
     this.table[this.getChair(userId)].push(...valid_cards);
-    return { table: this.table, hand: this.hands[userId], new_hand: new_hand };
+    return { table: this.table, hands: this.hands[userId], new_hand: new_hand };
   }
 }
 exports.GameObject = GameObject;
