@@ -80,7 +80,7 @@ app.put("/register_player", (req, res) => {
       response.statusText = "username taken";
       break;
     case -1:
-      ressponse.statusCode = 409;
+      response.statusCode = 409;
       response.statusText = "game is full";
       break;
     default:
@@ -90,14 +90,17 @@ app.put("/register_player", (req, res) => {
   res.send(response);
 });
 
-app.get("/table", (req, res) => {
-  res.send(this.table);
-});
-
 app.get("/state", (req, res) => {
-  res.send({
-    table: this.table
-  });
+  if (!gameObject) {
+    res.send({statusCode: 500});
+  }
+  const response = {
+    table: gameObject.table
+  };
+  if (req.query.userId) {
+    response[hand] = gameObject.hands[req.query.userId];
+  }
+  res.send(response);
 });
 
 app.listen(port);
