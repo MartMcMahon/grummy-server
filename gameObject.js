@@ -18,7 +18,6 @@ class GameObject {
     //     hands: this.hands
     //   });
     // }, 1000);
-
   }
 
   startRound() {
@@ -61,18 +60,12 @@ class GameObject {
   }
 
   playCards(userId, cards) {
-    console.log(cards);
-    // const valid_cards = cards.filter(card => this.hands[userId].includes(card));
-    // TODO: revert back to this filter after implementing a way to compare card objects to properly filter
-    const valid_cards = cards;
-    console.log('valid_cards', valid_cards);
-    const new_hand = this.hands[userId].filter(
-      card => !valid_cards.includes(card)
+    this.table[this.getChair(userId)].push(
+      ...cards.map(i => this.hands[userId][i])
     );
-
-    this.hands[userId] = new_hand;
-    this.table[this.getChair(userId)].push(...valid_cards);
-    return { table: this.table, hands: this.hands[userId], new_hand: new_hand };
+    cards.forEach((i, j) => {
+      this.hands[userId].splice(i - j, 1);
+    });
   }
 }
 exports.GameObject = GameObject;

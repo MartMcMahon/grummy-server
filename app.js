@@ -57,11 +57,11 @@ app.get("/game_status", (req, res) => {
 
 app.put("/play_cards", (req, res) => {
   const userId = req.query.userId;
-  const cards = JSON.parse(req.query.cards).map(
-    base_card => new Card(base_card)
-  );
+  const cards = JSON.parse(req.query.cards)
+    // .map(
+    // base_card => new Card(base_card)
+  // );
   const new_state = gameObject.playCards(userId, cards);
-  console.log(new_state);
   res.send(new_state);
 });
 
@@ -98,7 +98,7 @@ app.get("/state", (req, res) => {
     table: gameObject.table
   };
   if (req.query.userId) {
-    response[hand] = gameObject.hands[req.query.userId];
+    response["hand"] = gameObject.hands[req.query.userId];
   }
   res.send(response);
 });
