@@ -39,25 +39,28 @@ describe("gameObject", () => {
 
     it("plays cards in the hand", () => {
       gameObject.registerPlayer(111);
-      const small_run = [{suit:1, value: 2}, {suit: 1, value: 3}, {suit:1, value:4}];
-      gameObject.hands[111] = [...small_run, {suit: 3, value: 10}];
-      let new_state = gameObject.playCards(111, [...small_run]);
+      const small_run = [
+        { suit: 1, value: 2 },
+        { suit: 1, value: 3 },
+        { suit: 1, value: 4 }
+      ];
+      gameObject.hands[111] = [...small_run, { suit: 3, value: 10 }];
+      let new_state = gameObject.playCards(111, [0, 1, 2]);
       small_run.forEach(c => {
         expect(gameObject.table[0]).toContain(c);
         expect(gameObject.hands[111]).not.toContain(c);
       });
-      expect(gameObject.hands[111]).toContain({suit:3, value: 10});
+      expect(gameObject.hands[111]).toContain({ suit: 3, value: 10 });
       expect(gameObject.hands[111].length).toEqual(1);
     });
 
-  //   it("doesn't play a card not in the hand", () => {
-  //     gameObject.registerPlayer(111);
-  //     let { table, hand } = gameObject.playCards(111, [
-  //       { suit: 1, value: 1 },
-  //       { suit: 69, value: 69 }
-  //     ]);
-  //     expect(table[0]).toEqual([]);
-  //   });
-
+    //   it("doesn't play a card not in the hand", () => {
+    //     gameObject.registerPlayer(111);
+    //     let { table, hand } = gameObject.playCards(111, [
+    //       { suit: 1, value: 1 },
+    //       { suit: 69, value: 69 }
+    //     ]);
+    //     expect(table[0]).toEqual([]);
+    //   });
   });
 });
