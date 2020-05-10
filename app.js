@@ -57,16 +57,20 @@ app.get("/game_status", (req, res) => {
 
 app.put("/play_cards", (req, res) => {
   const userId = req.query.userId;
-  const cards = JSON.parse(req.query.cards).map(
-    base_card => new Card(base_card)
-  );
+  const cards = JSON.parse(req.query.cards);
+  // .map(
+  // base_card => new Card(base_card)
+  // );
+  console.log(gameObject);
   const new_state = gameObject.playCards(userId, cards);
-  console.log(new_state);
   res.send(new_state);
 });
 
-app.get("/get_hand", (req, res) => {
-  res.send(gameObject.hands[req.query.userId]);
+app.put("/discard", (req, res) => {
+  const userId = req.query.userId;
+  const index = req.query.index;
+  const new_state = gameObject.discardCard(userId, index);
+  res.send(new_state);
 });
 
 app.put("/register_player", (req, res) => {
@@ -80,7 +84,7 @@ app.put("/register_player", (req, res) => {
       response.statusText = "username taken";
       break;
     case -1:
-      ressponse.statusCode = 409;
+      response.statusCode = 409;
       response.statusText = "game is full";
       break;
     default:
@@ -90,14 +94,20 @@ app.put("/register_player", (req, res) => {
   res.send(response);
 });
 
-app.get("/table", (req, res) => {
-  res.send(this.table);
-});
-
 app.get("/state", (req, res) => {
-  res.send({
-    table: this.table
-  });
+  if (!gameObject) {
+    res.send({ statusCode: 500 });
+  }
+  const response = {
+    table: gameObject.table,
+    discard: gameObject.discard,
+    turn: gameObject.turn,
+    phase: gameObject.phase
+  };
+  if (req.query.userId) {
+    response["hand"] = gameObject.hands[req.query.userId];
+  }
+  res.send(response);
 });
 
 app.listen(port);

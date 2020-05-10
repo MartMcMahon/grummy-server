@@ -4,11 +4,14 @@ class GameObject {
   constructor() {
     this.id = Date.now().toString();
     this.deck = [];
+    this.discard = [];
     this.hands = {};
     this.players = ["", "", "", ""];
     this.rounds = 0;
     this.score = [0, 0, 0, 0];
     this.table = [[], [], [], []];
+    this.turn = 0;
+    this.turn_phase = 0;
 
     // this.clock = setInterval(() => {
     //   console.log({
@@ -18,15 +21,17 @@ class GameObject {
     //     hands: this.hands
     //   });
     // }, 1000);
-
   }
 
   startRound() {
+    this.discard= [];
     this.rounds += 1;
     this.deck = new deckMod.Deck();
     this.deck.shuffle();
     this.table = [[], [], [], []];
     this.hands = {};
+    this.turn = 0;
+    this.turn_phase = 0;
   }
 
   // checks for presence of username in the game
@@ -48,6 +53,11 @@ class GameObject {
     return chair;
   }
 
+  drawForTurn(userId) {
+    this.phase += 1;
+    return deal(userId);
+  }
+
   deal(userId, n = 1) {
     for (let i = n; i--; ) {
       const card = this.deck.draw();
@@ -61,18 +71,26 @@ class GameObject {
   }
 
   playCards(userId, cards) {
-    console.log(cards);
-    // const valid_cards = cards.filter(card => this.hands[userId].includes(card));
-    // TODO: revert back to this filter after implementing a way to compare card objects to properly filter
-    const valid_cards = cards;
-    console.log('valid_cards', valid_cards);
-    const new_hand = this.hands[userId].filter(
-      card => !valid_cards.includes(card)
+    this.table[this.getChair(userId)].push(
+      ...cards.map(i => this.hands[userId][i])
     );
-
-    this.hands[userId] = new_hand;
-    this.table[this.getChair(userId)].push(...valid_cards);
-    return { table: this.table, hands: this.hands[userId], new_hand: new_hand };
+    cards.forEach((i, j) => {
+      this.hands[userId].splice(i - j, 1);
+    });
   }
+
+  discardCard(userId, index) {
+    console.log("pushing " + JSON.stringify(this.hands[userId][index]) + " onto the discard pile");
+    this.discard.push(this.hands[userId][index]);
+    console.log("splicing " + JSON.stringify(this.hands[userId][index]) + "");
+    this.hands[userId].splice(index, 1);
+  }
+
+  pickupDiscard(userId, index) {
+    let cards = this.discard.splice(index);
+    cards[0].mustPlay = true;
+    this.hands[userId].push(cards);
+  }
+
 }
 exports.GameObject = GameObject;
